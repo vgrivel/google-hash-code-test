@@ -1,6 +1,8 @@
 package ch.daplab.google;
 
 import ch.daplab.google.Algo.AlgoNaive;
+import ch.daplab.google.input.Container;
+import ch.daplab.google.input.Input;
 import ch.daplab.google.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +16,8 @@ public class App {
     private static final Logger LOG = LoggerFactory.getLogger(App.class);
 
     public static void main(String args[]) throws Exception {
-        Utils utils = new Utils();
-        short[][] matrix = utils.loadData("logo.in");
-        utils.printMatrix(matrix);
-        List<String> listCmd=AlgoNaive.algoNaiveLine(matrix);
-        utils.printListCommand(listCmd);
+       Input input = new Input();
+        Container container = input.loadData("busy_day.in");
+
     }
 }
