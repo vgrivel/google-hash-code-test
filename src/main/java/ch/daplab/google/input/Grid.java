@@ -1,5 +1,8 @@
 package ch.daplab.google.input;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by vincent on 2/11/16.
  */
@@ -9,6 +12,7 @@ public class Grid {
     private int drones;
     private int turns;
     private int maxP;
+    private List<Drone> droneList = new ArrayList<>();
 
     public int getRows() {
         return rows;
@@ -48,5 +52,13 @@ public class Grid {
 
     public void setMaxP(int maxP) {
         this.maxP = maxP;
+    }
+
+    public List<Drone> getDroneList() {
+        return droneList;
+    }
+
+    public void setDroneList(List<Drone> droneList) {
+        this.droneList = droneList;
     }
 }

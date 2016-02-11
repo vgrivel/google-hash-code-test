@@ -1,5 +1,10 @@
 package ch.daplab.google.dorwi.commands;
 
+import ch.daplab.google.input.Drone;
+import ch.daplab.google.input.Order;
+import ch.daplab.google.input.Product;
+import ch.daplab.google.input.Warehouse;
+
 /**
  * Created by dori on 11.02.16.
  */
@@ -19,9 +24,16 @@ public class Deliver extends Command {
     }
 
 
+    public Deliver(Drone drone, Order order, Product product, int itemNr){
+        this(drone.getId(), order.getId(), product.getId(), itemNr);
+    }
+
+
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(droneId);
+        StringBuilder sb = new StringBuilder();
+        sb.append(droneId);
         sb.append(" ");
         sb.append(tag);
         sb.append(" ");

@@ -10,6 +10,7 @@ public class Container {
     private List<Order> orderList;
     private List<Warehouse> warehouseList;
     private List<Product> productList;
+    private List<Drone> droneList;
 
     public Grid getGrid() {
         return grid;
@@ -41,5 +42,13 @@ public class Container {
 
     public void setProductList(List<Product> productList) {
         this.productList = productList;
+    }
+
+    public List<Drone> getDroneList() {
+        return grid.getDroneList();
+    }
+
+    public void setDroneList(List<Drone> droneList) {
+        this.droneList = droneList;
     }
 }

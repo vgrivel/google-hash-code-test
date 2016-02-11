@@ -61,6 +61,10 @@ public class Input {
         g.setDrones(Integer.valueOf(dim[2]));
         g.setTurns(Integer.valueOf(dim[3]));
         g.setMaxP(Integer.valueOf(dim[4]));
+        for (int i=0; i< g.getDrones(); ++i){
+            g.getDroneList().add(new Drone(i, g.getMaxP()));
+        }
+
         return g;
     }
 
@@ -113,6 +117,7 @@ public class Input {
         //for each warehouse
         for (int i = 0; i < nbrOrder; i++) {
             Order order = new Order();
+            order.setId(i);
             String coord = br.readLine();
             String[] dim = coord.split(" ");
             order.setCoordRow(Integer.valueOf(dim[0]));

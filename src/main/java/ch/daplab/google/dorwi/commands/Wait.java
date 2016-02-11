@@ -11,4 +11,15 @@ public class Wait extends Command {
         this.tag = 'W';
         this.turns = turns;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(droneId);
+        sb.append(" ");
+        sb.append(tag);
+        sb.append(" ");
+        sb.append(turns);
+        return sb.toString();
+    }
 }
