@@ -8,3 +8,4 @@ res2.xml
 *.jar
 *.avro
 build
+*.out

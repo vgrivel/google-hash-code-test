@@ -1,8 +1,7 @@
 package ch.daplab.google.dorwi;
 
-import ch.daplab.google.input.Container;
-import ch.daplab.google.input.Order;
-import ch.daplab.google.input.Warehouse;
+
+import ch.daplab.google.input.*;
 
 import java.util.*;
 
@@ -17,7 +16,10 @@ public class Helper {
     }
 
 
-    public static List<Order> sortOrder(List<Order> orders, final int x, final int y) {
+    public static List<Order> sortOrder(List<Order> orders, Warehouse warehouse){
+        final int x = warehouse.getCoordCol();
+        final int y = warehouse.getCoordRow();
+
         int n = orders.size();
         Order[] orderArray = new Order[n];
         orderArray = orders.toArray(orderArray);
@@ -27,7 +29,7 @@ public class Helper {
             public int compare(Order order, Order t1) {
                 int d1 = distance(order.getCoordCol(), order.getCoordRow(), x, y);
                 int d2 = distance(t1.getCoordCol(), t1.getCoordRow(), x, y);
-                if (d1 < d2) {
+                if (d1 < d2){
                     return -1;
                 } else if (d1 > d2) {
                     return 1;
@@ -41,7 +43,9 @@ public class Helper {
     }
 
 
-    public static List<Warehouse> sortWarehouse(List<Warehouse> wareHouses, final int x, final int y) {
+    public static Warehouse sortWarehouse(List<Warehouse> wareHouses, Order order){
+        final int x = order.getCoordCol();
+        final int y = order.getCoordRow();
         int n = wareHouses.size();
         Warehouse[] wareHouseArray = new Warehouse[n];
         wareHouseArray = wareHouses.toArray(wareHouseArray);
@@ -51,7 +55,7 @@ public class Helper {
             public int compare(Warehouse order, Warehouse t1) {
                 int d1 = distance(order.getCoordCol(), order.getCoordRow(), x, y);
                 int d2 = distance(t1.getCoordCol(), t1.getCoordRow(), x, y);
-                if (d1 < d2) {
+                if (d1 < d2){
                     return -1;
                 } else if (d1 > d2) {
                     return 1;
@@ -61,7 +65,18 @@ public class Helper {
             }
         });
 
-        return Arrays.asList(wareHouseArray);
+        return wareHouseArray[0];
+    }
+
+
+
+    public static boolean canLoad(Warehouse warehouse, Order order){
+        for (Map.Entry<Product, Integer> entry: order.getProductQty().entrySet()){
+            if (warehouse.getMapQty().get(entry.getKey()) < entry.getValue()){
+                return false;
+            }
+        }
+        return true;
     }
 
     public static Map<Order, Warehouse> getClosestWarehouseForOrder(Container container) {
@@ -71,8 +86,8 @@ public class Helper {
 
         Map<Order, Warehouse> map = new HashMap<>();
         for (ch.daplab.google.input.Order order : orderList) {
-            List<Warehouse> warehouses = Helper.sortWarehouse(warehouseList, order.getCoordCol(), order.getCoordRow());
-            map.put(order, warehouses.get(0));
+            Warehouse warehouses = Helper.sortWarehouse(warehouseList, order);
+            map.put(order, warehouses);
         }
 
         return map;
@@ -85,7 +100,7 @@ public class Helper {
 
         Map<Warehouse, Order> map = new HashMap<>();
         for (Warehouse warehouse : warehouseList) {
-            List<Order> listOrder = Helper.sortOrder(orderList, warehouse.getCoordCol(), warehouse.getCoordRow());
+            List<Order> listOrder = Helper.sortOrder(orderList, warehouse);
             map.put(warehouse, listOrder.get(0));
         }
 
