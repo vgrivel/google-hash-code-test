@@ -41,9 +41,10 @@ public class Helper {
             public int compare(Order order, Order t1) {
                 double num1 = Math.ceil(getOrderWeight(order) /  drone_size);
                 double num2 = Math.ceil(getOrderWeight(t1) /  drone_size);
+                // TODO maybe the log ones should be processed in the end
                 int d1 = distance(order.getCoordCol(), order.getCoordRow(), x, y);
                 int d2 = distance(t1.getCoordCol(), t1.getCoordRow(), x, y);
-                if (d1 < d2){
+                if (d1 < d2) {
                     return -1;
                 } else if (d1 > d2) {
                     return 1;
@@ -120,6 +121,7 @@ public class Helper {
         return map;
     }
 
+    
     public static Map<Warehouse, List<Order>> getListOrderForWarehouse(Container container) {
         Map<Order, Warehouse> map = getClosestWarehouseForOrder(container);
         Map<Warehouse, List<Order>> mapListWarehouseOrder = new HashMap<>();
@@ -152,19 +154,20 @@ public class Helper {
 
             List<Order> orderToDeliver = new ArrayList<>();
 
-            for (int i = 0; i < orderWarehouse.size(); i++) {
+            for (int i=0; i<orderWarehouse.size(); i++) {
                 Order order = orderWarehouse.get(i);
-                boolean toadd = true;
+                boolean toadd=true;
                 for (Product product : order.getProductList()) {
                     if (mapQty.get(product) > 0) {
                         Integer qty = mapQty.remove(product);
-                        mapQty.put(product, qty - 1);
-                    } else {
-                        toadd = false;
+                        mapQty.put(product, qty-1);
+                    }
+                    else{
+                        toadd=false;
                     }
                 }
                 //we keep that order
-                if (toadd) {
+                if(toadd) {
                     orderToDeliver.add(order);
                 }
             }
