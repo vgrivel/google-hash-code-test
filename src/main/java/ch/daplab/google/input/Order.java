@@ -11,6 +11,7 @@ public class Order {
     private int coordRow;
     private int coordCol;
     private int id;
+    private boolean delivered = false;
     private Map<Product, Integer> productQty = new HashMap<>();
 
     public List<Product> getProductList() {
@@ -52,6 +53,14 @@ public class Order {
 
     public void setCoordCol(int coordCol) {
         this.coordCol = coordCol;
+    }
+
+    public boolean isDelivered() {
+        return delivered;
+    }
+
+    public void setDelivered(boolean delivered) {
+        this.delivered = delivered;
     }
 
     private List<Product> productList;
