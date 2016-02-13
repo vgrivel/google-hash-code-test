@@ -1,7 +1,10 @@
 package ch.daplab.google.dorwi;
 
 
-import ch.daplab.google.input.*;
+import ch.daplab.google.input.Container;
+import ch.daplab.google.input.Order;
+import ch.daplab.google.input.Product;
+import ch.daplab.google.input.Warehouse;
 
 import java.util.*;
 
@@ -38,11 +41,10 @@ public class Helper {
             public int compare(Order order, Order t1) {
                 double num1 = Math.ceil(getOrderWeight(order) /  drone_size);
                 double num2 = Math.ceil(getOrderWeight(t1) /  drone_size);
+                // TODO maybe the log ones should be processed in the end
                 int d1 = distance(order.getCoordCol(), order.getCoordRow(), x, y);
                 int d2 = distance(t1.getCoordCol(), t1.getCoordRow(), x, y);
-                d1 /= num1;
-                d2 /= num2;
-                if (d1 < d2){
+                if (d1 < d2) {
                     return -1;
                 } else if (d1 > d2) {
                     return 1;
@@ -56,7 +58,7 @@ public class Helper {
     }
 
 
-    public static Warehouse sortWarehouse(List<Warehouse> wareHouses, Order order){
+    public static Warehouse sortWarehouse(List<Warehouse> wareHouses, Order order) {
         final int x = order.getCoordCol();
         final int y = order.getCoordRow();
         int n = wareHouses.size();
@@ -68,7 +70,7 @@ public class Helper {
             public int compare(Warehouse order, Warehouse t1) {
                 int d1 = distance(order.getCoordCol(), order.getCoordRow(), x, y);
                 int d2 = distance(t1.getCoordCol(), t1.getCoordRow(), x, y);
-                if (d1 < d2){
+                if (d1 < d2) {
                     return -1;
                 } else if (d1 > d2) {
                     return 1;
@@ -82,10 +84,9 @@ public class Helper {
     }
 
 
-
-    public static boolean canLoad(Warehouse warehouse, Order order){
-        for (Map.Entry<Product, Integer> entry: order.getProductQty().entrySet()){
-            if (warehouse.getMapQty().get(entry.getKey()) < entry.getValue()){
+    public static boolean canLoad(Warehouse warehouse, Order order) {
+        for (Map.Entry<Product, Integer> entry : order.getProductQty().entrySet()) {
+            if (warehouse.getMapQty().get(entry.getKey()) < entry.getValue()) {
                 return false;
             }
         }
@@ -121,10 +122,67 @@ public class Helper {
     }
 
 
-    public static void LoadFromWareHouse(Warehouse w, Order o){
-        for (Map.Entry<Product, Integer> entry: o.getProductQty().entrySet()){
+    public static void LoadFromWareHouse(Warehouse w, Order o) {
+        for (Map.Entry<Product, Integer> entry : o.getProductQty().entrySet()) {
             int num = w.getMapQty().get(entry.getKey());
             w.getMapQty().put(entry.getKey(), num - entry.getValue());
         }
+    }
+
+    public static Map<Warehouse, List<Order>> getListOrderForWarehouse(Container container) {
+        Map<Order, Warehouse> map = getClosestWarehouseForOrder(container);
+        Map<Warehouse, List<Order>> mapListWarehouseOrder = new HashMap<>();
+
+
+        for (Order order : map.keySet()) {
+            if (!mapListWarehouseOrder.containsKey(map.get(order))) {
+                List<Order> orderList = new ArrayList<>();
+                orderList.add(order);
+                mapListWarehouseOrder.put(map.get(order), orderList);
+            } else {
+                List<Order> orderList = mapListWarehouseOrder.remove(map.get(order));
+                orderList.add(order);
+                mapListWarehouseOrder.put(map.get(order), orderList);
+            }
+
+        }
+
+        return mapListWarehouseOrder;
+    }
+
+    public static Map<Warehouse, List<Order>> getListOrderForWarehouseCanBeDeliver(Container container) {
+        Map<Warehouse, List<Order>> mapListWarehouseOrder = getListOrderForWarehouse(container);
+        Map<Warehouse, List<Order>> returnMapList = new HashMap<>();
+
+        for (Warehouse warehouse : mapListWarehouseOrder.keySet()) {
+
+            Map<Product, Integer> mapQty = new HashMap<>(warehouse.getMapQty());
+            List<Order> orderWarehouse = mapListWarehouseOrder.get(warehouse);
+
+            List<Order> orderToDeliver = new ArrayList<>();
+
+            for (int i=0; i<orderWarehouse.size(); i++) {
+                Order order = orderWarehouse.get(i);
+                boolean toadd=true;
+                for (Product product : order.getProductList()) {
+                    if (mapQty.get(product) > 0) {
+                        Integer qty = mapQty.remove(product);
+                        mapQty.put(product, qty-1);
+                    }
+                    else{
+                        toadd=false;
+                    }
+                }
+                //we keep that order
+                if(toadd) {
+                    orderToDeliver.add(order);
+                }
+            }
+
+
+            returnMapList.put(warehouse, orderToDeliver);
+        }
+        return returnMapList;
+
     }
 }
