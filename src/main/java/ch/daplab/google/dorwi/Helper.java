@@ -13,13 +13,22 @@ import java.util.*;
  */
 public class Helper {
 
+    public static int drone_size;
 
     public static int distance(int x1, int y1, int x2, int y2) {
         return (int) Math.ceil(Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)));
     }
 
 
-    public static List<Order> sortOrder(List<Order> orders, Warehouse warehouse) {
+    public static int getOrderWeight(Order order){
+        int c = 0;
+        for (Map.Entry<Product, Integer> product: order.getProductQty().entrySet()){
+            c += product.getValue()*product.getKey().getWeight();
+        }
+        return c;
+    }
+
+    public static List<Order> sortOrder(List<Order> orders, Warehouse warehouse){
         final int x = warehouse.getCoordCol();
         final int y = warehouse.getCoordRow();
 
@@ -30,9 +39,11 @@ public class Helper {
         Arrays.sort(orderArray, new Comparator<Order>() {
             @Override
             public int compare(Order order, Order t1) {
+                double num1 = Math.ceil(getOrderWeight(order) /  drone_size);
+                double num2 = Math.ceil(getOrderWeight(t1) /  drone_size);
                 int d1 = distance(order.getCoordCol(), order.getCoordRow(), x, y);
                 int d2 = distance(t1.getCoordCol(), t1.getCoordRow(), x, y);
-                if (d1 < d2) {
+                if (d1 < d2){
                     return -1;
                 } else if (d1 > d2) {
                     return 1;
@@ -141,20 +152,19 @@ public class Helper {
 
             List<Order> orderToDeliver = new ArrayList<>();
 
-            for (int i=0; i<orderWarehouse.size(); i++) {
+            for (int i = 0; i < orderWarehouse.size(); i++) {
                 Order order = orderWarehouse.get(i);
-                boolean toadd=true;
+                boolean toadd = true;
                 for (Product product : order.getProductList()) {
                     if (mapQty.get(product) > 0) {
                         Integer qty = mapQty.remove(product);
-                        mapQty.put(product, qty-1);
-                    }
-                    else{
-                        toadd=false;
+                        mapQty.put(product, qty - 1);
+                    } else {
+                        toadd = false;
                     }
                 }
                 //we keep that order
-                if(toadd) {
+                if (toadd) {
                     orderToDeliver.add(order);
                 }
             }
@@ -163,6 +173,12 @@ public class Helper {
             returnMapList.put(warehouse, orderToDeliver);
         }
         return returnMapList;
+    }
 
+    public static void LoadFromWareHouse(Warehouse w, Order o){
+        for (Map.Entry<Product, Integer> entry: o.getProductQty().entrySet()){
+            int num = w.getMapQty().get(entry.getKey());
+            w.getMapQty().put(entry.getKey(), num - entry.getValue());
+        }
     }
 }

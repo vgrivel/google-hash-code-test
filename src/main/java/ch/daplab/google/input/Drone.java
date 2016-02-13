@@ -12,7 +12,7 @@ public class Drone {
 
     final int capacity;
     final int id;
-
+    List<Command> commands = new ArrayList<>();
 
     public Drone(int id, int capacity) {
         this.id = id;
@@ -23,5 +23,15 @@ public class Drone {
         return id;
     }
 
+    public int getCapacity() {
+        return capacity;
+    }
 
+    public List<Command> getCommands() {
+        return commands;
+    }
+
+    public void setCommands(List<Command> commands) {
+        this.commands = commands;
+    }
 }
